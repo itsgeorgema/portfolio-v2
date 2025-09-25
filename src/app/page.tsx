@@ -45,54 +45,16 @@ const slider2 = [
 ];
 
 export default function Home() {
-  const [showScrollButton, setShowScrollButton] = useState(true);
   const scrollContainerRef = useRef(null);
   const heroRef = useRef(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window?.scrollY > 0) {
-        setShowScrollButton(false);
-      } else {
-        setShowScrollButton(true);
-      }
-    };
-
-    window?.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window?.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const scrollToNext = () => {
-    const nextSection = document.getElementById('sliding-images');
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div ref={scrollContainerRef} className="overflow-x-hidden">
-      <LetterCollision />
       <div id="hero" ref={heroRef} className="relative">
         <Hero />
-        {showScrollButton && (
-          <button
-            aria-label="Scroll to next section"
-            onClick={scrollToNext}
-            className="absolute bottom-12 left-1/2 z-10 -translate-x-1/2 rounded-full bg-white/10 p-4 text-white backdrop-blur transition hover:bg-white/20"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="h-8 w-8 animate-bounce"
-            >
-              <path fillRule="evenodd" d="M12 16.5a.75.75 0 0 1-.53-.22l-6-6a.75.75 0 1 1 1.06-1.06L12 14.69l5.47-5.47a.75.75 0 1 1 1.06 1.06l-6 6a.75.75 0 0 1-.53.22z" clipRule="evenodd" />
-            </svg>
-          </button>
-        )}
+        <div className="pointer-events-none absolute inset-0 z-10">
+          <LetterCollision />
+        </div>
       </div>
       <div id="next-section">
         <Description />

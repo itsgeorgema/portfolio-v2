@@ -7,9 +7,7 @@ import RoundedButton from '@/components/animations/roundedButton';
 import Link from 'next/link';
 
 export default function ContactInfo() {
-  const [timeNow, setTimeNow] = useState(
-    new Date().getHours() + ':' + new Date().getMinutes()
-  );
+  const [timeNow, setTimeNow] = useState<string>('');
   const container = useRef(null);
   const { scrollYProgress } = useScroll({
     target: container,
@@ -23,12 +21,23 @@ export default function ContactInfo() {
     "after:ease-linear after:content-[''] hover:after:w-full";
 
   useEffect(() => {
+    // Set initial time only on client
+    setTimeNow(new Date().toLocaleTimeString('en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      timeZone: 'Europe/London'
+    }));
+
     const interval = setInterval(() => {
-      setTimeNow(new Date().toLocaleTimeString());
+      setTimeNow(new Date().toLocaleTimeString('en-GB', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Europe/London'
+      }));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeNow]);
+  }, []);
 
   return (
     <motion.div
@@ -85,7 +94,7 @@ export default function ContactInfo() {
                 Timezone
               </h3>
               <p className="relative m-0 cursor-pointer p-1">
-                {timeNow} UK (GMT+1)
+                {timeNow || '--:--'} UK (GMT+1)
               </p>
             </span>
           </div>

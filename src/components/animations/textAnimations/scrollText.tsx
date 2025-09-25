@@ -48,7 +48,7 @@ function LetterDisplay({ word }: { word: string }) {
   return word.split('').map((letter, index) => (
     <div
       key={index}
-      className="letter text-white text-6xl font-semibold xs:text-[90px] xs:leading-none md:text-[120px] lg:text-[150px] xl:text-[210px]"
+      className="letter font-orbitron text-white text-6xl font-[500] xs:text-[90px] xs:leading-none md:text-[120px] lg:text-[150px] xl:text-[210px]"
       data-speed={0.8 + (index * 0.1) % 0.7} // Use index-based deterministic value
     >
       {letter}
@@ -71,8 +71,8 @@ export function LetterCollision() {
   };
 
   return (
-    <div ref={containerRef} className="ml-8 scroll-smooth relative">
-      <div className="mt-16 flex h-screen flex-col justify-center">
+    <div ref={containerRef} className="scroll-smooth relative">
+      <div className="mt-16 flex h-screen flex-col justify-center px-8">
         <div className="flex flex-wrap p-0">
           <LetterDisplay word={hi} />
           <div className="w-2 xs:w-4 sm:w-10"></div>
@@ -86,10 +86,10 @@ export function LetterCollision() {
           <LetterDisplay word={george} />
         </div>
         {/* Arrow beneath the text that scrambles */}
-        <div className="flex justify-center mt-16">
+        <div className="flex justify-center mt-16 w-full">
           <div
             ref={arrowLetterRef}
-            className="letter text-white cursor-pointer text-4xl font-semibold xs:text-5xl xs:leading-none md:text-6xl lg:text-7xl xl:text-8xl animate-bounce"
+            className="letter font-oxanium text-white cursor-pointer text-4xl font-[600] xs:text-5xl xs:leading-none md:text-6xl lg:text-7xl xl:text-8xl animate-bounce pointer-events-auto"
             data-speed={1.2} // Fixed value to avoid hydration mismatch
             onClick={scrollToNext}
           >

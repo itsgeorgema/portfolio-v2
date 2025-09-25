@@ -70,7 +70,19 @@
     * {
       @apply border-border;
     }
+    html, body, :not(input):not(textarea):not([contenteditable="true"]) {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
     body {
       @apply bg-transparent text-foreground;
     }
+  }
+
+  /* Font utility classes using CSS variables from next/font */
+  @layer utilities {
+    .font-orbitron { font-family: var(--font-orbitron), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    .font-oxanium { font-family: var(--font-oxanium), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
   }

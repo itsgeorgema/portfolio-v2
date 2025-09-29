@@ -7,23 +7,33 @@ import NavLinks from '@/components/nav/NavLinks';
 const links = [
   {
     title: 'home',
-    href: '/'
+    href: '#hero',
+    isSection: true
   },
   {
     title: 'about',
-    href: '/about'
+    href: '#about',
+    isSection: true
   },
   {
     title: 'projects',
-    href: '/projects'
+    href: '#projects',
+    isSection: true
   },
   {
-    title: 'gallery',
-    href: '/gallery'
+    title: 'resume',
+    href: '/George_Ma_Resume.pdf',
+    isSection: false
   },
   {
-    title: 'contact',
-    href: '/contact'
+    title: 'github',
+    href: 'https://github.com/itsgeorgema',
+    isSection: false
+  },
+  {
+    title: 'linkedin',
+    href: 'https://linkedin.com/in/ggeorgema',
+    isSection: false
   }
 ];
 

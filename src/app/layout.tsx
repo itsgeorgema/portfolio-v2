@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${orbitron.variable} ${oxanium.variable}`}>
       <SpeedInsights />
-      <body className="overflow-scroll overflow-x-hidden bg-transparent" suppressHydrationWarning>
+      <body className="overflow-scroll overflow-x-hidden bg-transparent font-orbitron" suppressHydrationWarning>
         <SpaceBackground className="animate-fade-in fixed inset-0 z-0" />
         <FluidSimulation className="animate-fade-in fixed inset-0 z-0" />
         <Animations>

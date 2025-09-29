@@ -6,7 +6,6 @@ import {
   useScroll,
   useTransform
 } from 'framer-motion';
-import ContactInfo from '@/components/home/ContactInfo';
 import { isMobile } from '@/components/util';
 import { clsx } from 'clsx';
 import { usePathname } from 'next/navigation';
@@ -25,7 +24,7 @@ export default function RootTemplate({ children }: PropsWithChildren) {
   const pathname = usePathname().split('/').pop();
 
   let bgColour = 'bg-background';
-  const darkModeScreens = ['contact', 'm31', 'astra'];
+  const darkModeScreens = ['m31', 'astra'];
   if (darkModeScreens.includes(pathname!)) {
     bgColour = 'bg-foreground';
   } else if (pathname === 'about') {
@@ -56,7 +55,6 @@ export default function RootTemplate({ children }: PropsWithChildren) {
           ></div>
         </motion.div>
       </div>
-      <ContactInfo />
     </main>
   );
 }

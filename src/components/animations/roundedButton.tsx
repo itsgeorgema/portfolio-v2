@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 interface Props {
   backgroundColor?: string;
   className?: string;
+  onClick?: () => void;
 }
 
 export default function RoundedButton({
   children,
   backgroundColor = 'secondary',
+  onClick,
   ...attributes
 }: PropsWithChildren<Props>) {
   const circle = useRef(null);
@@ -55,6 +57,7 @@ export default function RoundedButton({
         onMouseLeave={() => {
           manageMouseLeave();
         }}
+        onClick={onClick}
         {...attributes}
       >
         <div className="relative z-10 transition-colors duration-300 ease-linear hover:text-white">

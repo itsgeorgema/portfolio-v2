@@ -2,6 +2,47 @@
   @tailwind components;
   @tailwind utilities;
 
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    75% { transform: rotate(-10deg); }
+  }
+
+  .animate-wave {
+    animation: wave 1s ease-in-out infinite;
+  }
+
+  /* Ensure our custom cursor element is always on top */
+  div[id*="cursor"],
+  div[id*="initial-cursor"] {
+    z-index: 999999 !important;
+    pointer-events: none !important;
+    position: fixed !important;
+  }
+
+  /* Special handling for cursor elements to ensure they're always visible */
+  div[style*="backdrop-filter: invert(100%)"] {
+    z-index: 999999 !important;
+    pointer-events: none !important;
+  }
+
+  /* Ensure iframe doesn't block cursor visibility */
+  iframe {
+    position: relative;
+    z-index: auto;
+  }
+
+  /* Make sure cursor works over all content */
+  body * {
+    /* Allow cursor to be visible */
+    position: relative;
+  }
+
+  /* Override any z-index conflicts for cursor visibility */
+  [data-testid="embed-iframe"] {
+    z-index: 1 !important;
+  }
+
 
   @layer base {
     :root {

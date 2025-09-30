@@ -77,7 +77,7 @@ function LetterDisplay({ word }: { word: string }) {
 
 export function LetterCollision() {
   const containerRef = useRef(null);
-  const arrowLetterRef = useRef<HTMLDivElement | null>(null);
+  const arrowLetterRef = useRef<HTMLButtonElement | null>(null);
   const scrollAnimationRef = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export function LetterCollision() {
   }, []);
 
   const scrollToNext = () => {
-    const nextSection = document.getElementById('description');
+    const nextSection = document.getElementById('about');
     if (nextSection) {
       const targetPosition = nextSection.offsetTop;
       

@@ -52,12 +52,13 @@ function getAngle(diffX: number, diffY: number) {
 }
 
 function getRekt(el: HTMLElement) {
-  if (el.classList.contains("cursor-can-hover"))
+  // Add null checks for classList
+  if (el?.classList?.contains("cursor-can-hover"))
     return el.getBoundingClientRect();
-  else if (el.parentElement?.classList.contains("cursor-can-hover"))
+  else if (el.parentElement?.classList?.contains("cursor-can-hover"))
     return el.parentElement.getBoundingClientRect();
   else if (
-    el.parentElement?.parentElement?.classList.contains("cursor-can-hover")
+    el.parentElement?.parentElement?.classList?.contains("cursor-can-hover")
   )
     return el.parentElement.parentElement.getBoundingClientRect();
   return null;

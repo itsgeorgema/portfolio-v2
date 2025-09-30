@@ -1,19 +1,16 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
-import { ArrowDownRight } from 'lucide-react';
+import React, { useEffect, useRef, useState, forwardRef } from 'react';
 import SlidingImages from '@/components/home/SlidingImages';
 import { LetterCollision } from '@/components/animations/textAnimations/scrollText';
-import Magnetic from '@/components/animations/magnetic';
 import Hero from '@/components/home/hero';
-import Description from '@/components/home/Description/description';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { useSpotify } from '@/hooks/useSpotify';
 import { useGitHub } from '@/hooks/useGithub';
 import GitHubContributionsGraph from '@/app/about/githubActivity';
-import SpotifyPlaylists from '@/app/about/spotifyPlaylists';
+import SpotifyTrackCard from '@/app/about/spotifyTrackCard';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import ProjectLink from '@/app/projects/projectLink';
 import Modal from '@/app/projects/project/modal';
 import { ModalContext } from '@/app/projects/modalContext';
@@ -98,19 +95,185 @@ const projects = [
   }
 ];
 
+type ExperienceItem = {
+  title: string;
+  company: string;
+  url?: string;
+  date: string;
+  highlights: string[];
+};
+
+const experiences: ExperienceItem[] = [
+  {
+    title: 'Software Engineer Intern',
+    company: 'Praxie AI',
+    url: 'https://praxie.ai/',
+    date: 'Apr. 2025 – Present',
+    highlights: [
+      'Created reusable MVP React Native UI components for iOS and Android',
+      'Developed algorithms for searching, sorting, and saving tournaments',
+      'Optimized database structures by denormalizing fields'
+    ]
+  },
+  {
+    title: 'Webmaster/Lead Developer',
+    company: 'Alpha Kappa Psi @ UCSD',
+    date: 'Dec. 2024 – Present',
+    highlights: [
+      'Developed a new chapter website using Next.js, Tailwind CSS, and Supabase',
+      'Led a team of 3 developers with a Github-driven agile workflow'
+    ]
+  },
+  {
+    title: 'Data Science Consultant',
+    company: 'DS3 @ UCSD',
+    date: 'Mar. 2025 – Jun. 2025',
+    highlights: [
+      'Implemented a data processing pipeline for client datasets',
+      'Built a Streamlit dashboard for client data visualization',
+      'Forecasted participation with XGBoost, SARIMA, and Prophet with automated residual diagnostics'
+    ]
+  }
+];
+
+function ExperienceTimeline() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Calculate which timeline item is closest to the center of the viewport
+  useEffect(() => {
+    if (experiences.length === 0) return;
+
+    const calculateClosestItem = () => {
+      const viewportHeight = window.innerHeight;
+      const viewportCenter = viewportHeight / 2;
+
+      let closestIndex = 0;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      itemRefs.current.forEach((item, index) => {
+        if (!item) return;
+        const rect = item.getBoundingClientRect();
+        const itemCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(itemCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      if (closestIndex !== activeIndex) {
+        setActiveIndex(closestIndex);
+      }
+    };
+
+    calculateClosestItem();
+    window.addEventListener("scroll", calculateClosestItem);
+    window.addEventListener("resize", calculateClosestItem);
+    return () => {
+      window.removeEventListener("scroll", calculateClosestItem);
+      window.removeEventListener("resize", calculateClosestItem);
+    };
+  }, [activeIndex]);
+
+  return (
+    <div className="relative max-w-4xl mx-auto w-full">
+      <h3 className="mb-16 text-center text-4xl font-bold text-white lg:text-5xl">
+        Experience
+      </h3>
+      <div className="absolute left-4 md:left-1/2 h-full w-0.5 bg-purple-400/50 transform md:-translate-x-1/2 z-0" />
+      <div className="space-y-12 relative">
+        {experiences.map((experience, index) => (
+          <TimelineItem
+            key={index}
+            experience={experience}
+            index={index}
+            isActive={index === activeIndex}
+            ref={(el) => {
+              itemRefs.current[index] = el;
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface TimelineItemProps {
+  experience: ExperienceItem;
+  index: number;
+  isActive: boolean;
+}
+
+const TimelineItem = forwardRef<HTMLDivElement, TimelineItemProps>(function TimelineItem(
+  { experience, index, isActive },
+  ref
+) {
+  return (
+    <div
+      ref={ref}
+      className={`flex flex-col md:flex-row items-start md:items-center gap-4 ${
+        index % 2 === 0 ? "md:flex-row-reverse" : ""
+      }`}
+    >
+      <motion.div
+        className={`flex-1 text-left`}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+      >
+        <div
+          className={`${
+            isActive
+              ? "bg-gray-900/90 border-purple-400 border-2 scale-[1.02]"
+              : "bg-gray-900/80 border-purple-400/40 border-2"
+          } rounded-lg p-6 shadow-lg transition-all duration-300 relative z-20 text-white text-left`}
+        >
+          <h4 className="text-xl font-bold mb-2">{experience.title}</h4>
+          <p className="text-lg font-semibold text-purple-400 mb-2">
+            {experience.url ? (
+              <a
+                href={experience.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {experience.company}
+              </a>
+            ) : (
+              experience.company
+            )}
+          </p>
+          <p className="text-sm text-gray-300 mb-4">{experience.date}</p>
+          <ul className="list-disc pl-5 space-y-2 text-gray-300 text-sm marker:text-gray-300 marker:font-extrabold">
+            {experience.highlights.map((h, i) => (
+              <li key={i}>{h}</li>
+            ))}
+          </ul>
+        </div>
+      </motion.div>
+      <div className="flex items-center justify-center z-10">
+        <div
+          className={`w-8 h-8 rounded-full transition-colors duration-300 border-4 border-purple-400/50 ${
+            isActive
+              ? "bg-purple-600"
+              : "bg-gray-700"
+          }`}
+        />
+      </div>
+      <div className="flex-1 hidden md:block"></div>
+    </div>
+  );
+});
+
+TimelineItem.displayName = "TimelineItem";
+
 export default function Home() {
   const scrollContainerRef = useRef(null);
   const heroRef = useRef(null);
   const starsRef = useRef<HTMLDivElement>(null);
   const [modal, setModal] = useState({ active: false, index: 0 });
   
-  const {
-    playlists,
-    isLoading: spotifyLoading,
-    error: spotifyError,
-    topTracks
-  } = useSpotify();
-
   const {
     githubData,
     isLoading: githubLoading,
@@ -139,187 +302,90 @@ export default function Home() {
     <ModalContext.Provider value={{ modal, setModal }}>
       <div ref={scrollContainerRef} className="overflow-x-hidden">
         {/* Hero Section */}
-        <div id="hero" ref={heroRef} className="relative">
+        <div id="hero" ref={heroRef} className="relative pb-80">
           <Hero />
-          <div className="pointer-events-none absolute inset-0 z-10">
+          <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
             <LetterCollision />
           </div>
         </div>
 
-        {/* Description Section */}
-        <div id="description" className="relative">
-          <Description />
-        </div>
-
         {/* About Section */}
-        <div id="about" className="relative overflow-hidden bg-gradient-to-b from-purple-200 via-purple-300 to-yellow-200">
+        <div id="about" className="relative overflow-hidden">
           <div className="relative min-h-screen">
-            <div ref={starsRef}>
-              {[...Array(50)].map((_, i) => {
-                // Use deterministic positioning with fixed precision to avoid hydration mismatch
-                const seed = i * 7.3;
-                const top = Math.round((Math.sin(seed) * 50 + 50) * 100) / 100;
-                const left = Math.round((Math.cos(seed) * 50 + 50) * 100) / 100;
-                
-                return (
-                  <div
-                    key={i}
-                    className="absolute h-1 w-1 rounded-full bg-white opacity-70"
-                    style={{
-                      top: `${top}%`,
-                      left: `${left}%`
-                    }}
-                  />
-                );
-              })}
-            </div>
+            <div ref={starsRef} />
 
             <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-              <div className="pb-14 text-3xl font-medium lg:text-[10rem] text-center">
-                I&apos;m George
-              </div>
-              <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
-                <div className="flex flex-col gap-10">
-                  <div className="relative">
-                    <div className="rounded-full blur-3xl" />
+              
+              {/* About Summary Section */}
+              <div className="mb-20">
+                <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-16 mb-12">
+                  {/* Profile Image */}
+                  <div className="flex-shrink-0">
                     <Image
-                      className="relative z-10 mx-auto h-auto w-full max-w-sm rounded-t-full shadow-lg"
-                      width={1440}
-                      height={1800}
-                      src="/images/profile2.jpg"
-                      alt="Profile picture"
+                      src="/images/profile.jpeg"
+                      alt="George Ma"
+                      width={300}
+                      height={300}
+                      className="rounded-lg object-cover shadow-2xl"
                     />
                   </div>
-                  {spotifyLoading ? (
-                    <p>Loading Spotify playlists...</p>
-                  ) : spotifyError ? (
-                    <p>Error: {spotifyError}</p>
-                  ) : playlists.length > 0 ? (
-                    <SpotifyPlaylists playlists={playlists} />
-                  ) : null}
-                </div>
 
-                <div className="flex flex-col gap-10">
-                  <div className="text-primary-950/70 dark:text-primary-200/70 space-y-8">
-                    <p className="text-2xl font-semibold">
-                      A software engineer and designer with a passion for
-                      innovation and cutting-edge technology.
-                    </p>
-                    <p className="text-lg sm:text-xl">
-                      I have a strong track record of building and deploying
-                      successful products.
-                    </p>
-                    <p className="text-lg sm:text-xl">
-                      At{' '}
+                  {/* About Text */}
+                  <div className="flex-1 space-y-6 text-white">
+                    <h2 className="text-4xl font-bold text-white mb-6">
+                      Hi, I&apos;m George <span className="inline-block animate-wave">👋</span>
+                    </h2>
+                    
+                    <p className="text-lg leading-relaxed sm:text-xl">
+                      I&apos;m a Computer Science student at UCSD minoring in Business Analytics. I have extensive experience in web and app development as well as machine learning, and am pursuing a career in software engineering. I currently work as a Software Engineer Intern at{' '}
                       <Link
-                        href="https://www.sojo.uk/"
-                        className="font-semibold underline"
+                        href="https://www.praxie.ai/"
+                        className="font-semibold underline hover:text-purple-400"
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        Sojo
+                        Praxie AI
                       </Link>
-                      , I was the founding full-stack engineer, responsible for
-                      the design, development, and deployment of the
-                      company&apos;s core platform. I built a scalable and
-                      user-friendly app that allowed users to order repairs and
-                      customisation clothing services online.
+                      , a startup that provides an AI-powered coaching platform for youth golfers.
                     </p>
-                    <p className="text-lg sm:text-xl">
-                      After Sojo, I joined{' '}
-                      <Link
-                        href="https://www.catapultlabs.xyz/"
-                        className="font-semibold underline"
-                      >
-                        Catapult Labs
-                      </Link>
-                      , a startup in the blockchain space, as a founding
-                      full-stack software engineer. I played a key role in the
-                      development of the company&apos;s flagship product, a Web3
-                      profiles platform that enables networking in the
-                      decentralized space.
+
+                    <p className="text-lg leading-relaxed sm:text-xl">
+                      In my free time, I enjoy snowboarding, rock climbing, hiking, and playing basketball and guitar. I&apos;m also an avid fan of the Lakers, and McDonald&apos;s.
                     </p>
-                    <p className="text-lg sm:text-xl">
-                      I then worked on developing decentralised financial
-                      primitives and protocols to enable OTC (Over-The-Counter)
-                      crypto markets on-chain, including collateral management and
-                      margin trading systems. During this time I also learnt
-                      Solidity, to enable the development of smart contracts to
-                      enable new on-chain financial products.
-                    </p>
-                    <p className="text-lg sm:text-xl">
-                      In recent months I have been working on an AI co-pilot for
-                      digital asset trading that unifies client conversations
-                      across chat clients like Telegram using OpenAI&apos;s
-                      models.
-                    </p>
-                    <p className="text-lg sm:text-xl">
-                      At Imperial College London, I studied design engineering.
-                      During my time at university, I worked on a number of
-                      projects, including{' '}
-                      <Link
-                        href="#projects"
-                        className="font-semibold underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          const section = document.getElementById('projects');
-                          if (section) {
-                            const targetPosition = section.offsetTop;
-                            gsap.to(window, {
-                              duration: 2.0,
-                              scrollTo: { 
-                                y: targetPosition,
-                                autoKill: true
-                              },
-                              ease: "power2.inOut"
-                            });
-                          }
-                        }}
-                      >
-                        Andromeda
-                      </Link>
-                      , which was awarded a gold prize in the Creative Conscience
-                      Awards, and{' '}
-                      <Link
-                        href="#projects"
-                        className="font-semibold underline"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          const section = document.getElementById('projects');
-                          if (section) {
-                            const targetPosition = section.offsetTop;
-                            gsap.to(window, {
-                              duration: 2.0,
-                              scrollTo: { 
-                                y: targetPosition,
-                                autoKill: true
-                              },
-                              ease: "power2.inOut"
-                            });
-                          }
-                        }}
-                      >
-                        AxoWear
-                      </Link>
-                      , which was exhibited at the Design Museum London.
-                    </p>
+
+                    {/* Music Section - centered within text column */}
+                    <div className="flex justify-center pt-4">
+                      <div className="w-full max-w-sm">
+                        <SpotifyTrackCard />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <Link
-                className="flex flex-col gap-10 pt-10"
-                href="https://github.com/itsgeorgema"
-              >
-                {githubLoading ? (
-                  <div></div>
-                ) : githubError ? (
-                  <div></div>
-                ) : githubData ? (
-                  <GitHubContributionsGraph
-                    contributions={githubData.contributions}
-                    totalContributions={githubData.totalContributions}
-                    restrictedContributions={githubData.restrictedContributions}
-                  />
-                ) : null}
-              </Link>
+
+
+              {/* Experience Timeline */}
+              <ExperienceTimeline />
+
+              {/* GitHub Activity */}
+              <div className="mt-20 flex justify-center">
+                <Link
+                  className="flex flex-col gap-10 max-w-4xl w-full"
+                  href="https://github.com/itsgeorgema"
+                >
+                  {githubLoading ? (
+                    <div></div>
+                  ) : githubError ? (
+                    <div></div>
+                  ) : githubData ? (
+                    <GitHubContributionsGraph
+                      contributions={githubData.contributions}
+                      totalContributions={githubData.totalContributions}
+                      restrictedContributions={githubData.restrictedContributions}
+                    />
+                  ) : null}
+                </Link>
+              </div>
             </div>
           </div>
         </div>

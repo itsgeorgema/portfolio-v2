@@ -27,6 +27,9 @@ const animateLettersOnScroll = (containerRef: MutableRefObject<any>) => {
   const letterElements = lettersContainer?.querySelectorAll('.letter');
 
   letterElements.forEach((letter: Element, index: number) => {
+    // Set initial position to ensure consistent starting state
+    gsap.set(letter, { y: 0, rotation: 0 });
+    
     gsap.to(letter, {
       y: (i, el) =>
         (1 - parseFloat(el.getAttribute('data-speed'))) *
@@ -43,24 +46,6 @@ const animateLettersOnScroll = (containerRef: MutableRefObject<any>) => {
       rotation: getRandomRotation()
     });
   });
-
-  // Special animation for the button to mimic text scrambling
-  const button = lettersContainer?.querySelector('button.letter');
-  if (button) {
-    gsap.to(button, {
-      y: (1 - parseFloat(button.getAttribute('data-speed'))) * ScrollTrigger.maxScroll(window),
-      rotation: () => Math.random() * 120 - 60, // Random rotation between -60 and 60 degrees
-      ease: 'power2.out',
-      duration: 0.8,
-      scrollTrigger: {
-        trigger: document.documentElement,
-        start: 0,
-        end: window.innerHeight,
-        invalidateOnRefresh: true,
-        scrub: 0.5
-      }
-    });
-  }
 };
 
 function LetterDisplay({ word }: { word: string }) {
@@ -83,6 +68,9 @@ export function LetterCollision() {
   useEffect(() => {
     if (!containerRef.current) return;
     animateLettersOnScroll(containerRef);
+    
+    // Refresh ScrollTrigger after animations are set up
+    ScrollTrigger.refresh();
   }, []);
 
   const scrollToNext = () => {

@@ -20,7 +20,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toast": "^1.2.15",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@react-three/drei": "^9.122.0",
+    "@react-three/drei": "9.109.5",
     "@react-three/fiber": "^9.0.0",
     "@shadcn/ui": "^0.0.4",
     "@studio-freight/lenis": "^1.0.42",

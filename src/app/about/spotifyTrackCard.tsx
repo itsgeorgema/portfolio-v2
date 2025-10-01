@@ -100,7 +100,7 @@ export default function SpotifyTrackCard() {
         style={{
           borderRadius: '12px',
           width: '100%',
-          height: '150px',
+          height: '200px',
           border: 'none',
           display: 'block'
         }} 

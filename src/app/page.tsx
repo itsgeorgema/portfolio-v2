@@ -324,8 +324,8 @@ export default function Home() {
                     <Image
                       src="/images/profile.jpeg"
                       alt="George Ma"
-                      width={300}
-                      height={300}
+                      width={340}
+                      height={340}
                       className="rounded-lg object-cover shadow-2xl"
                     />
                   </div>
@@ -350,7 +350,7 @@ export default function Home() {
                     </p>
 
                     <p className="text-lg leading-relaxed sm:text-xl">
-                      In my free time, I enjoy snowboarding, rock climbing, hiking, and playing basketball and guitar. I&apos;m also an avid fan of the Lakers, and McDonald&apos;s.
+                      In my free time, I enjoy snowboarding, rock climbing, hiking, and playing basketball and guitar. I&apos;m also an avid fan of the Lakers and McDonald&apos;s.
                     </p>
 
                     {/* Music Section - centered within text column */}
